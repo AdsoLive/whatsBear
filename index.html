@@ -9,11 +9,36 @@
     <h1>Bear Type Classifier</h1>
     <p>Upload an image of a bear to see its classification:</p>
     
-    <!-- Embed the Gradio app -->
-    <iframe 
-        src="https://huggingface.co/spaces/AdsoLive/bear-classifier" 
-        width="100%" 
-        height="800px" 
-        frameborder="0"></iframe>
+    <!-- Image Upload Input -->
+    <input type="file" id="imageUpload" accept="image/*">
+    <button onclick="classifyBear()">Classify Bear</button>
+
+    <h3 id="result"></h3>
+
+    <script>
+        async function classifyBear() {
+            const input = document.getElementById('imageUpload');
+            const file = input.files[0];
+            
+            if (!file) {
+                alert('Please upload an image first.');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('file', file);
+
+            // Send the image to the Gradio Space hosted on Hugging Face
+            const response = await fetch('https://huggingface.co/spaces/AdsoLive/bear-classifier/predict', {  // Replace with your Gradio API URL
+                method: 'POST',
+                body: formData
+            });
+
+            const result = await response.json();
+
+            // Display the result
+            document.getElementById('result').innerText = `Prediction: ${result[0].label}`;
+        }
+    </script>
 </body>
 </html>
